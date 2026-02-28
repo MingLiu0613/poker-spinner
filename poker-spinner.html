@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Poker Decision Spinner</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Poker Spin">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #0d1117;
+      font-family: 'Outfit', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background-image:
+        radial-gradient(ellipse at top, #1a2332 0%, transparent 50%),
+        radial-gradient(circle at 20% 80%, rgba(35, 134, 54, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 80% 20%, rgba(218, 54, 51, 0.08) 0%, transparent 40%);
+    }
+
+    .container {
+      background: #161b22;
+      border-radius: 24px;
+      padding: 32px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      border: 1px solid #30363d;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .header h1 {
+      color: #e6edf3;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .header p {
+      color: #8b949e;
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    .input-section {
+      margin-bottom: 24px;
+    }
+
+    .input-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .input-label span {
+      color: #8b949e;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .percentage-display {
+      font-size: 18px;
+      font-weight: 600;
+      color: #e6edf3;
+    }
+
+    .percentage-display .call-pct {
+      color: #238636;
+    }
+
+    .percentage-display .fold-pct {
+      color: #da3633;
+    }
+
+    .slider-container {
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 8px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: linear-gradient(to right, #238636 0%, #238636 var(--call-percent), #da3633 var(--call-percent), #da3633 100%);
+      border-radius: 4px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      background: #e6edf3;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      transition: transform 0.15s ease;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 24px;
+      height: 24px;
+      background: #e6edf3;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .number-input-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .number-input-row input {
+      width: 80px;
+      padding: 10px 12px;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      color: #e6edf3;
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .number-input-row input:focus {
+      outline: none;
+      border-color: #58a6ff;
+    }
+
+    .number-input-row span {
+      color: #8b949e;
+      font-size: 14px;
+    }
+
+    .wheel-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .wheel-container {
+      position: relative;
+      width: 280px;
+      height: 280px;
+    }
+
+    .wheel-outer {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      border-radius: 50%;
+      box-shadow:
+        0 0 0 6px #30363d,
+        0 6px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .wheel {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      position: relative;
+      overflow: hidden;
+      transition: transform 4s cubic-bezier(0.1, 0, 0.2, 1);
+    }
+
+    .wheel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: conic-gradient(
+        from 0deg,
+        #238636 0deg,
+        #238636 var(--call-angle),
+        #da3633 var(--call-angle),
+        #da3633 360deg
+      );
+    }
+
+    /* Number labels around the wheel */
+    .wheel-numbers {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+    }
+
+    .wheel-numbers span {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 10px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.9);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+      transform-origin: center center;
+    }
+
+    .wheel-numbers span.call-num {
+      color: #fff;
+    }
+
+    .wheel-numbers span.fold-num {
+      color: #ffcccc;
+    }
+
+    .wheel::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, transparent 55%, rgba(0,0,0,0.25) 100%);
+      pointer-events: none;
+    }
+
+    .wheel-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 70px;
+      height: 70px;
+      background: #161b22;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      border: 3px solid #30363d;
+      z-index: 10;
+    }
+
+    .wheel-center .call-label {
+      font-size: 10px;
+      color: #8b949e;
+      font-weight: 500;
+    }
+
+    .wheel-center .call-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #238636;
+      line-height: 1.1;
+    }
+
+    .wheel-center .fold-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #da3633;
+      line-height: 1.1;
+    }
+
+    .wheel-pointer {
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 16px solid transparent;
+      border-right: 16px solid transparent;
+      border-top: 26px solid #e6edf3;
+      filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.5));
+      z-index: 20;
+    }
+
+    .spin-btn {
+      width: 100%;
+      padding: 16px 32px;
+      background: linear-gradient(135deg, #58a6ff 0%, #1f6feb 100%);
+      border: none;
+      border-radius: 12px;
+      color: #ffffff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 16px rgba(88, 166, 255, 0.3);
+      text-transform: uppercase;
+    }
+
+    .spin-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(88, 166, 255, 0.4);
+    }
+
+    .spin-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .spin-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .result-section {
+      margin-top: 24px;
+      text-align: center;
+      min-height: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .result-text {
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .result-text.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .result-text.call {
+      color: #238636;
+      text-shadow: 0 0 30px rgba(35, 134, 54, 0.6);
+    }
+
+    .result-text.fold {
+      color: #da3633;
+      text-shadow: 0 0 30px rgba(218, 54, 51, 0.6);
+    }
+
+    .result-number {
+      font-size: 14px;
+      color: #8b949e;
+      margin-top: 8px;
+      opacity: 0;
+      transition: opacity 0.5s ease 0.3s;
+    }
+
+    .result-number.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Poker Decision Spinner</h1>
+      <p>Let fate decide your hand</p>
+    </div>
+
+    <div class="input-section">
+      <div class="input-label">
+        <span>Call Probability</span>
+        <div class="percentage-display">
+          <span class="call-pct" id="callDisplay">62%</span>
+          <span> / </span>
+          <span class="fold-pct" id="foldDisplay">38%</span>
+        </div>
+      </div>
+
+      <div class="slider-container">
+        <input type="range" id="percentageSlider" min="0" max="100" value="62" step="1">
+      </div>
+
+      <div class="number-input-row">
+        <input type="number" id="percentageInput" min="0" max="100" value="62">
+        <span>% call</span>
+      </div>
+    </div>
+
+    <div class="wheel-section">
+      <div class="wheel-container">
+        <div class="wheel-pointer"></div>
+        <div class="wheel-outer">
+          <div class="wheel" id="wheel">
+            <div class="wheel-numbers" id="wheelNumbers"></div>
+          </div>
+        </div>
+        <div class="wheel-center">
+          <span class="call-label">CALL</span>
+          <span class="call-value" id="wheelCallValue">62%</span>
+          <span class="fold-value" id="wheelFoldValue">38%</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="spin-btn" id="spinBtn">SPIN</button>
+
+    <div class="result-section">
+      <div class="result-text" id="resultText"></div>
+      <div class="result-number" id="resultNumber"></div>
+    </div>
+  </div>
+
+  <script>
+    const slider = document.getElementById('percentageSlider');
+    const input = document.getElementById('percentageInput');
+    const callDisplay = document.getElementById('callDisplay');
+    const foldDisplay = document.getElementById('foldDisplay');
+    const wheelCallValue = document.getElementById('wheelCallValue');
+    const wheelFoldValue = document.getElementById('wheelFoldValue');
+    const wheel = document.getElementById('wheel');
+    const wheelNumbers = document.getElementById('wheelNumbers');
+    const spinBtn = document.getElementById('spinBtn');
+    const resultText = document.getElementById('resultText');
+    const resultNumber = document.getElementById('resultNumber');
+
+    let currentCallPercent = 62;
+    let isSpinning = false;
+
+    // Generate number labels around the wheel
+    function generateNumbers() {
+      wheelNumbers.innerHTML = '';
+      const callPercent = currentCallPercent;
+
+      for (let i = 0; i < 100; i++) {
+        const span = document.createElement('span');
+        span.textContent = i;
+
+        // Each number is 3.6 degrees, starting from 0 at top (pointing up)
+        // We rotate so that 0 is at the top and numbers go clockwise
+        const angle = i * 3.6 - 90;
+        span.style.transform = `rotate(${angle}deg)`;
+
+        // Color based on call/fold zones
+        if (i < callPercent) {
+          span.classList.add('call-num');
+        } else {
+          span.classList.add('fold-num');
+        }
+
+        wheelNumbers.appendChild(span);
+      }
+    }
+
+    function updateDisplay(percent) {
+      percent = Math.max(0, Math.min(100, parseInt(percent) || 0));
+      currentCallPercent = percent;
+      const foldPercent = 100 - percent;
+
+      slider.value = percent;
+      input.value = percent;
+
+      callDisplay.textContent = `${percent}%`;
+      foldDisplay.textContent = `${foldPercent}%`;
+
+      wheelCallValue.textContent = `${percent}%`;
+      wheelFoldValue.textContent = `${foldPercent}%`;
+
+      slider.style.setProperty('--call-percent', `${percent}%`);
+      wheel.style.setProperty('--call-angle', `${percent * 3.6}deg`);
+
+      generateNumbers();
+    }
+
+    function spin() {
+      if (isSpinning) return;
+
+      isSpinning = true;
+      spinBtn.disabled = true;
+      resultText.classList.remove('show', 'call', 'fold');
+      resultNumber.classList.remove('show');
+      resultText.textContent = '';
+      resultNumber.textContent = '';
+
+      // Cryptographically secure random: 0-99 using Web Crypto API
+      const array = new Uint32Array(1);
+      crypto.getRandomValues(array);
+      const randomNum = array[0] % 100;
+      const callPercent = currentCallPercent;
+      const isCall = randomNum < callPercent;
+
+      // Calculate angle to land on the random number
+      // Pointer is at top (270 degrees in CSS terms, or -90)
+      // Numbers go clockwise from top (0 at top)
+      // We need to rotate so the random number lands at the top (pointer position)
+
+      // Base: 2 full rotations (720 degrees)
+      const baseRotations = 2 * 360;
+
+      // Each number = 3.6 degrees
+      // To land on number X at top, we rotate: base + (360 - X * 3.6)
+      // Because we want to rotate counter-clockwise to bring the number to top
+      const anglePerNumber = 3.6;
+      const targetAngle = baseRotations + (360 - randomNum * anglePerNumber);
+
+      // Reset wheel position
+      wheel.style.transition = 'none';
+      wheel.style.transform = 'rotate(0deg)';
+
+      // Force reflow
+      wheel.offsetHeight;
+
+      // Start spinning
+      setTimeout(() => {
+        wheel.style.transition = 'transform 4s cubic-bezier(0.15, 0, 0.15, 1)';
+        wheel.style.transform = `rotate(${targetAngle}deg)`;
+      }, 50);
+
+      setTimeout(() => {
+        resultText.textContent = isCall ? 'CALL!' : 'FOLD!';
+        resultText.classList.add('show', isCall ? 'call' : 'fold');
+
+        if (callPercent === 0) {
+          resultNumber.textContent = `Number: ${randomNum} (Always Fold)`;
+        } else if (callPercent === 100) {
+          resultNumber.textContent = `Number: ${randomNum} (Always Call)`;
+        } else {
+          resultNumber.textContent = `Number: ${randomNum} (0-${callPercent - 1} = Call, ${callPercent}-99 = Fold)`;
+        }
+        resultNumber.classList.add('show');
+
+        isSpinning = false;
+        spinBtn.disabled = false;
+      }, 4150);
+    }
+
+    slider.addEventListener('input', () => {
+      updateDisplay(slider.value);
+    });
+
+    input.addEventListener('input', () => {
+      let value = parseInt(input.value) || 0;
+      value = Math.max(0, Math.min(100, value));
+      updateDisplay(value);
+    });
+
+    spinBtn.addEventListener('click', spin);
+
+    updateDisplay(62);
+
+    // Register service worker for PWA
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+  </script>
+</body>
+</html>
