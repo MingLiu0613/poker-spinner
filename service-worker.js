@@ -1,8 +1,8 @@
 const CACHE_NAME = 'poker-spinner-v1';
 const urlsToCache = [
-  '/',
-  '/poker-spinner.html',
-  '/manifest.json'
+  './',
+  './poker-spinner.html',
+  './manifest.json'
 ];
 
 self.addEventListener('install', event => {
