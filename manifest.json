@@ -1,7 +1,7 @@
 {
-  "name": "Poker Decision Spinner",
-  "short_name": "Poker Spin",
-  "description": "Texas Hold'em fortune spinner for poker decisions",
+  "name": "Poker Tools",
+  "short_name": "Poker Tools",
+  "description": "Texas Hold'em decision spinner and win rate calculator",
   "start_url": "./poker-spinner.html",
   "scope": "./",
   "display": "standalone",

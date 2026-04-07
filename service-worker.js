@@ -1,7 +1,8 @@
-const CACHE_NAME = 'poker-spinner-v1';
+const CACHE_NAME = 'poker-tools-v2';
 const urlsToCache = [
   './',
   './poker-spinner.html',
+  './holdem-equity.html',
   './manifest.json'
 ];
 

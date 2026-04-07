@@ -20,14 +20,51 @@
       min-height: 100vh;
       background: #0d1117;
       font-family: 'Outfit', sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       padding: 20px;
       background-image:
         radial-gradient(ellipse at top, #1a2332 0%, transparent 50%),
         radial-gradient(circle at 20% 80%, rgba(35, 134, 54, 0.08) 0%, transparent 40%),
         radial-gradient(circle at 80% 20%, rgba(218, 54, 51, 0.08) 0%, transparent 40%);
+    }
+
+    .page {
+      min-height: calc(100vh - 40px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+    }
+
+    .tool-nav {
+      display: inline-flex;
+      gap: 8px;
+      padding: 8px;
+      border: 1px solid #30363d;
+      border-radius: 999px;
+      background: rgba(22, 27, 34, 0.8);
+      backdrop-filter: blur(8px);
+    }
+
+    .tool-nav a {
+      color: #8b949e;
+      text-decoration: none;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .tool-nav a.active {
+      background: linear-gradient(135deg, #58a6ff 0%, #1f6feb 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 16px rgba(88, 166, 255, 0.3);
+    }
+
+    .tool-nav a:not(.active):hover {
+      color: #e6edf3;
+      background: rgba(88, 166, 255, 0.08);
     }
 
     .container {
@@ -377,53 +414,60 @@
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>Poker Decision Spinner</h1>
-      <p>Let fate decide your hand</p>
-    </div>
+  <div class="page">
+    <nav class="tool-nav" aria-label="Poker tools">
+      <a href="poker-spinner.html" class="active">Decision Spinner</a>
+      <a href="holdem-equity.html">Win Rate Calculator</a>
+    </nav>
 
-    <div class="input-section">
-      <div class="input-label">
-        <span>Call Probability</span>
-        <div class="percentage-display">
-          <span class="call-pct" id="callDisplay">62%</span>
-          <span> / </span>
-          <span class="fold-pct" id="foldDisplay">38%</span>
-        </div>
+    <div class="container">
+      <div class="header">
+        <h1>Poker Decision Spinner</h1>
+        <p>Let fate decide your hand</p>
       </div>
 
-      <div class="slider-container">
-        <input type="range" id="percentageSlider" min="0" max="100" value="62" step="1">
-      </div>
-
-      <div class="number-input-row">
-        <input type="number" id="percentageInput" min="0" max="100" value="62">
-        <span>% call</span>
-      </div>
-    </div>
-
-    <div class="wheel-section">
-      <div class="wheel-container">
-        <div class="wheel-pointer"></div>
-        <div class="wheel-outer">
-          <div class="wheel" id="wheel">
-            <div class="wheel-numbers" id="wheelNumbers"></div>
+      <div class="input-section">
+        <div class="input-label">
+          <span>Call Probability</span>
+          <div class="percentage-display">
+            <span class="call-pct" id="callDisplay">62%</span>
+            <span> / </span>
+            <span class="fold-pct" id="foldDisplay">38%</span>
           </div>
         </div>
-        <div class="wheel-center">
-          <span class="call-label">CALL</span>
-          <span class="call-value" id="wheelCallValue">62%</span>
-          <span class="fold-value" id="wheelFoldValue">38%</span>
+
+        <div class="slider-container">
+          <input type="range" id="percentageSlider" min="0" max="100" value="62" step="1">
+        </div>
+
+        <div class="number-input-row">
+          <input type="number" id="percentageInput" min="0" max="100" value="62">
+          <span>% call</span>
         </div>
       </div>
-    </div>
 
-    <button class="spin-btn" id="spinBtn">SPIN</button>
+      <div class="wheel-section">
+        <div class="wheel-container">
+          <div class="wheel-pointer"></div>
+          <div class="wheel-outer">
+            <div class="wheel" id="wheel">
+              <div class="wheel-numbers" id="wheelNumbers"></div>
+            </div>
+          </div>
+          <div class="wheel-center">
+            <span class="call-label">CALL</span>
+            <span class="call-value" id="wheelCallValue">62%</span>
+            <span class="fold-value" id="wheelFoldValue">38%</span>
+          </div>
+        </div>
+      </div>
 
-    <div class="result-section">
-      <div class="result-text" id="resultText"></div>
-      <div class="result-number" id="resultNumber"></div>
+      <button class="spin-btn" id="spinBtn">SPIN</button>
+
+      <div class="result-section">
+        <div class="result-text" id="resultText"></div>
+        <div class="result-number" id="resultNumber"></div>
+      </div>
     </div>
   </div>
 
